@@ -240,24 +240,28 @@ func GetCPU() (*api.ResourcesCPU, error) {
 	for cpuInfoScanner.Scan() {
 		line := strings.TrimSpace(cpuInfoScanner.Text())
 		if !strings.HasPrefix(line, "processor") {
-			return nil, fmt.Errorf("Failed to parse /proc/cpuinfo: Unexpected line %q", line)
+			// return nil, fmt.Errorf("Failed to parse /proc/cpuinfo: Unexpected line %q", line)
+			continue
 		}
 
 		// Extract cpu index
 		_, value, found := strings.Cut(line, ":")
 		if !found {
-			return nil, errors.New("Failed to parse /proc/cpuinfo: Missing separator")
+			// return nil, errors.New("Failed to parse /proc/cpuinfo: Missing separator")
+			continue
 		}
 
 		value = strings.TrimSpace(value)
 		cpuSocket, err := strconv.ParseInt(value, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to parse cpu index %q in /proc/cpuinfo: %w", value, err)
+			// return nil, fmt.Errorf("Failed to parse cpu index %q in /proc/cpuinfo: %w", value, err)
+			continue
 		}
 
 		_, ok := cpuInfoMap[cpuSocket]
 		if ok {
-			return nil, errors.New("Failed to parse /proc/cpuinfo: duplicate CPU block in cpuinfo?")
+			// return nil, errors.New("Failed to parse /proc/cpuinfo: duplicate CPU block in cpuinfo?")
+			continue
 		}
 
 		cpuInfo := &cpuInfo{}
